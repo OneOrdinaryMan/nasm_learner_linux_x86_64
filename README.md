@@ -45,7 +45,7 @@ last n-bits of the register accordingly
 |14|r14   |r14d  |r14w  |r14b   |
 |15|r15   |r15d  |r15w  |r15b   |
 ## Sections
-The assembly code executes from the tpo to down. Sections are useful to seperate the code. 
+The assembly code executes from the top to down. Sections are useful to seperate the code. 
 + *alloc* defines the section to be one which is loaded into memory when the program is run. noalloc defines it to be one which is not, such as an informational or comment section.
 + *exec* defines the section to be one which should have execute permission when the program is run. noexec defines it as one which should not.
 + *write* defines the section to be one which should be writable when the program is run. nowrite defines it as one which should not.
@@ -79,5 +79,23 @@ The assembly code executes from the tpo to down. Sections are useful to seperate
 |.fini_array   |fini_array   |alloc  |noexec|nowrite|pointer|-  |
 |.note         |note         |noalloc|noexec|nowrite|4      |-  |
 |.other        |progbits     |alloc  |noexec|nowrite|1      |-  |
+## General Instructions for x86_64 Linux
+These are some of the instructions that can be used,
+
+### ADC (ADD WITH CARRY)
+```asm
+adc <destination> <source>
+```
+Add the source operand to the destination operand with the carry flag and stores the result in destination operand. Operands are signed. Source must be a register
+### ADCX (UNSIGNED ADD WITH CARRY)
+```asm
+adcx <destination> <source>
+```
+Add the source operand to the destination operand with the carry flag and stores the result in destination operand. Operands are unsigned. Source must be a register
+### ADD (ADD WITHOUT CARRY)
+```asm
+add <destination> <source>
+```
+Add the source operand to the destination operand and stores the result in destination operand.If there is carry, the CF is set. Operands are unsigned. Source must be a register
 # License
 This project is licensed under *GNU GPL v3.0 OR LATER* license. Feel free to use the project.
