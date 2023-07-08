@@ -1,92 +1,83 @@
 # Nasm Learner Linux x86_64
+Every program compiles down to machine code. The human readable format of the machine code is assembly. Every architecture needs a different assembly.
 
+## Architecture
+The architecture used for this assembly is listed below,
 
+1) Architecture: *x86_64*
+2) Kernel: *Linux*
+3) Assembler: *nasm*
+4) Linker: *ld*
 
-## Getting started
+## Binary
+*nasm* will not create the executable binary in linux. *nasm* will create *elf64* file in linux. It takes the file with *<file>.asm* extension.
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+*elf64* stands for 64-bit Executable and Linkable Format. *elf64* files contains the elf header and binary sections to run the program. elf header will contains the information
+about the object files needed to be included Sections that are visible to the linker etc...
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+The *elf64* files need to be linked with the linker to produce the binary output. *ld* is used as linker here.
 
-## Add your files
+Commands to assemble and link the asm files are,
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
-
+```sh
+nasm -f elf64 -o <file>.o file.asm
+ld -o <file> <file>.o
 ```
-cd existing_repo
-git remote add origin https://gitlab.com/One_Ordinary_Man/nasm_learner_linux_x86_64.git
-git branch -M main
-git push -uf origin main
-```
+## CPU REGISTERS
+Registers are the memory spaces in the cpu itself. Generally there are 16 registers in cpu. The registers name used will determine the usage of the register. Generally, it will use
+last n-bits of the register accordingly
+|No|64-bit|32-bit|16-bit|8-bit  |
+|--|------|------|------|-------|
+|00|rax   |eax   |ax    |ah,al  |
+|01|rbx   |ebx   |bx    |bh,bl  |
+|02|rcx   |ecx   |cx    |ch,cl  |
+|03|rdx   |edx   |dx    |dh,dl  |
+|05|rbp   |ebp   |bp    |bph,bpl|
+|04|rsi   |esi   |si    |sih,sil|
+|06|rdi   |edi   |di    |dih,dil|
+|07|rsp   |esp   |sp    |sph,spl|
+|08|r8    |r8d   |r8w   |r8b    |
+|09|r9    |r9d   |r9w   |r9b    |
+|10|r10   |r10d  |r10w  |r10b   |
+|11|r11   |r11d  |r11w  |r11b   |
+|12|r12   |r12d  |r12w  |r12b   |
+|13|r13   |r13d  |r13w  |r13b   |
+|14|r14   |r14d  |r14w  |r14b   |
+|15|r15   |r15d  |r15w  |r15b   |
+## Sections
+The assembly code executes from the tpo to down. Sections are useful to seperate the code. 
++ *alloc* defines the section to be one which is loaded into memory when the program is run. noalloc defines it to be one which is not, such as an informational or comment section.
++ *exec* defines the section to be one which should have execute permission when the program is run. noexec defines it as one which should not.
++ *write* defines the section to be one which should be writable when the program is run. nowrite defines it as one which should not.
++ *progbits* defines the section to be one with explicit contents stored in the object file: an ordinary code or data section, for example.
++ *nobits* defines the section to be one with no explicit contents given, such as a BSS section. 
++ *note* indicates that this section contains ELF notes. The content of ELF notes are specified using normal assembly instructions; it is up to the programmer to ensure these are valid ELF notes. 
++ *preinit_array* indicates that this section contains function addresses to be called before any other initialization has happened. 
++ *init_array* indicates that this section contains function addresses to be called during initialization. 
++ *fini_array* indicates that this section contains function pointers to be called during termination. 
++ *align=*, used with a trailing number as in obj, gives the alignment requirements of the section. 
++ *byte*, word, dword, qword, tword, oword, yword, or zword with an optional *multiplier specify the fundamental data item size for a section which contains either fixed-sized data structures or strings; it also sets a default alignment. This is generally used with the strings and merge attributes (see below.) For example byte*4 defines a unit size of 4 bytes, with a default alignment of 1; dword also defines a unit size of 4 bytes, but with a default alignment of 4. The align= attribute, if specified, overrides this default alignment. 
++ *pointer* is equivalent to dword for elf32 or elfx32, and qword for elf64. 
++ *strings* indicate that this section contains exclusively null-terminated strings. By default these are assumed to be byte strings, but a size specifier can be used to override that. 
++ *merge* indicates that duplicate data elements in this section should be merged with data elements from other object files. Data elements can be either fixed-sized objects or null-terminatedstrings (with the strings attribute.) A size specifier is required unless strings is specified, in which case the size defaults to byte. 
++ *tls* defines the section to be one which contains thread local variables.
 
-## Integrate with your tools
-
-- [ ] [Set up project integrations](https://gitlab.com/One_Ordinary_Man/nasm_learner_linux_x86_64/-/settings/integrations)
-
-## Collaborate with your team
-
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
-
-## Test and Deploy
-
-Use the built-in continuous integration in GitLab.
-
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
-
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+|section       |progbits     |alloc  |exec  |write  |align  |tls|
+|-------       |--------     |-----  |----  |-----  |-----  |---|
+|.text         |progbits     |alloc  |exec  |nowrite|16     |-  |
+|.rodata       |progbits     |alloc  |noexec|nowrite|4      |-  |
+|.lrodata      |progbits     |alloc  |noexec|nowrite|4      |-  |
+|.data         |progbits     |alloc  |noexec|write  |4      |-  |
+|.ldata        |progbits     |alloc  |noexec|write  |4      |-  |
+|.bss          |nobits       |alloc  |noexec|write  |4      |-  |
+|.lbss         |nobits       |alloc  |noexec|write  |4      |-  |
+|.tdata        |progbits     |alloc  |noexec|write  |4      |tls|
+|.tbss         |nobits       |alloc  |noexec|write  |4      |tls|
+|.comment      |progbits     |noalloc|noexec|nowrite|1      |-  |
+|.preinit_array|preinit_array|alloc  |noexec|nowrite|pointer|-  |
+|.init_array   |init_array   |alloc  |noexec|nowrite|pointer|-  |
+|.fini_array   |fini_array   |alloc  |noexec|nowrite|pointer|-  |
+|.note         |note         |noalloc|noexec|nowrite|4      |-  |
+|.other        |progbits     |alloc  |noexec|nowrite|1      |-  |
+# License
+This project is licensed under *GNU GPL v3.0 OR LATER* license. Feel free to use the project.
