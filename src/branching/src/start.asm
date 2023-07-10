@@ -1,3 +1,4 @@
+    global _start
 section .comment
     ;Nasm Learner Linux x86_64
     ;Copyright (C) 2023  Srivathsan Sudarsanan
@@ -15,19 +16,22 @@ section .comment
     ;You should have received a copy of the GNU General Public License
     ;along with this program.  If not, see <https://www.gnu.org/licenses/>.
 section .data
-    hello db "Hello, World!",10,0
-    hello_size equ 15
+    v_1 db 25 ;string constant stored at addr at v_1
 section .text
-    global _start
-_start:
-    ; write the hello value to stdout
-    mov rax,1
-    mov rdi,1
-    mov rsi,hello
-    mov rdx,hello_size
-    syscall
 
-    ; exit the program with code 0
-    mov rax,60
-    mov rdi,0
+_start:
+    mov rax,1 ;move the value 1 to rax
+    mov rbx,2
+    mov rax,rbx ;move the value at rbx to rax
+    mov rax, [v_1] ;move the value at v_1 addr to rax
+    lea rax, v_1 ;load effective address of the memory location into the rax
+    call .empty
+    jmp .exit ;jmp to the section
+
+.exit:
+    mov rax, 60
+    mov rdi, 0
     syscall
+.empty:
+    mov rax, 1
+    ret

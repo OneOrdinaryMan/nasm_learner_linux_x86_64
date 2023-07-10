@@ -1,28 +1,27 @@
-CC:=nasm
-CCFLAGS:=-f elf64 -o
-LINKER:=ld
-LINKERFLAGS:=-o
-TARGET:=hello_world
-TARGET_DIR:=target
-OBJS := $(TARGET_DIR)/start.o
-SRC_DIR:=src
-TARGET_FILE:=$(TARGET_DIR)/$(TARGET)
-.DEFAULT_GOAL:= build
-.PHONY: clean remake rerun
+CC=nasm
+CCFLAGS=-f elf64 -o
+LINKER=ld
+LINKERFLAGS=-o
+TARGET=hello_world
+TARGET_DIR=target
+SRC_DIR=src
+START_FILE=$(SRC_DIR)/start.asm
+TARGET_FILE=$(TARGET_DIR)/$(TARGET)
+.DEFAULT_GOAL:=build
+.PHONY: clean remake
 build: $(TARGET_FILE)
 $(TARGET_DIR):
 	mkdir $@
-$(TARGET_FILE): $(OBJS)
-	$(LINKER) $(LINKERFLAGS) $@ $^
-$(TARGET_DIR)/%.o: $(SRC_DIR)/%asm $(TARGET_DIR)
+$(TARGET_DIR)/temp.o: $(START_FILE) $(TARGET_DIR)
 	$(CC) $(CCFLAGS) $@ $<
-run: $(TARGET_FILE)
-	./$<
+$(TARGET_FILE): $(TARGET_DIR)/temp.o
+	$(LINKER) $(LINKERFLAGS) $@ $<
 clean:
 	@{\
-		if [ -d $(TARGET_DIR) ]; then\
-		rm -r $(TARGET_DIR);\
+		if [ -d $(TARGET_DIR) ];then\
+		rm -rf $(TARGET_DIR);\
 		fi;\
 	}
 remake: clean build
-rerun: clean run
+run: $(TARGET_FILE)
+	./$<
